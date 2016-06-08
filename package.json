@@ -1,0 +1,25 @@
+{
+  "name": "ui",
+  "version": "0.0.0",
+  "description": "template for starting frontend development project",
+  "private": true,
+  "dependencies": {
+
+    "grunt": "latest",
+    "grunt-contrib-concat": "latest",
+    "grunt-contrib-copy": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-contrib-uglify": "latest",
+    "grunt-minify-html": "latest",
+    "load-grunt-tasks":"latest"
+  },
+  "devDependencies": {
+    "express": "latest",
+    "grunt-concurrent": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-nodemon": "latest"
+  },
+  "scripts": {
+    "postinstall": "grunt --env=$NODE_ENV"
+  }
+}
