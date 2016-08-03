@@ -1,10 +1,11 @@
 {
-  "name": "ui",
+  "name": "map",
   "version": "0.0.0",
-  "description": "template for starting frontend development project",
+  "description": "Game Map",
   "private": true,
   "dependencies": {
 
+    "body-parser": "latest",
     "grunt": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-copy": "latest",

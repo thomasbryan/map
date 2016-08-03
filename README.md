@@ -1,5 +1,5 @@
-# UI
-## Template for starting frontend development project.
+# Map
+## Map project.
 
 ### Installation
 ## Prod
