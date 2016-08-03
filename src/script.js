@@ -1,46 +1,38 @@
-/*
-  map render >
-data structure >
-
-25,000 >
-40 x 625 >
-5 x 25 > 
-
-gamma >
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 0
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
-...
-. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 39
-
-
-beta >
-[] [] [] [] [] 0
-[] [] [] [] [] 1
-[] [] [] [] [] 2
-[] [] [] [] [] 3
-[] [] [] [] [] 4
-
-alpha >
-  [
-    ['0','0','0','0','0'],
-    ['0','0','0','0','0'],
-    ['0','0','X','0','0'],
-    ['0','0','0','0','0'],
-    ['0','0','0','0','0'],
-  ]
-
-
-user.json > { "name" : "thomas", "position": { "x": 2, "y": 2} }
-
-collision > 
-
-
-tree>>
-
-layers > 
-[sprite]
-[action]
-
+var app = {};
+//TODO: loaded map regions
+$(document).ready(function() {
+  //TODO: auth
+  var auth = {"user":0};
+  $.post("/api/users",auth)
+  .done(function(res) {
+    app = res;
+    app.id = auth.user;
+    map();
+  });
+});
+$(document).keypress(function(e) {
+  switch(e.which) {
+    case 97: move(0); break;
+    case 100: move(2); break;
+    case 115: move(3); break;
+    case 119: move(1); break;
+//    default: console.log(e.which);break;
+  }
+});
+function map() {
+//get x y and determine if any maps need to be loaded.
+console.log(app.pos);
+/* shift
+[][][]
+[][][]
+[][][]
 */
-console.log('hi');
+}
+function move(req) {
+  $.post("/api/move",{"user":app.id,"dir":req})
+  .done(function(res) {
+    //trigger: encounter ?
+    console.log(res);
+    //map();
+  });
+}

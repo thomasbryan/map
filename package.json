@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
 
+    "jquery": "latest",
     "body-parser": "latest",
     "grunt": "latest",
     "grunt-contrib-concat": "latest",

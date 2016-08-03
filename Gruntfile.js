@@ -4,6 +4,7 @@ module.exports = function(grunt) {
     concat: {
       dist: {
         src: [
+          './node_modules/jquery/dist/jquery.js',
           './src/script.js',
         ],
         dest: './pub/script.js'
@@ -12,11 +13,10 @@ module.exports = function(grunt) {
     copy: {
       default: {
         expand: true,
-        cwd: './src/img/',
+        cwd: './src/map/',
         src: ['**/*'],
-        dest: './pub/img/',
-        filter: 'isFile',
-        flatten: true
+        dest: './pub/map/',
+        filter: 'isFile'
       }
     },
     less: {
