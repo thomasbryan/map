@@ -10,14 +10,14 @@ $(document).ready(function() {
     map();
   });
 });
-$(document).keypress(function(e) {
+$(document).keyup(function(e) {
   switch(e.which) {
-    case 97: move(0); break;
-    case 100: move(2); break;
-    case 115: move(3); break;
-    case 119: move(1); break;
-//    default: console.log(e.which);break;
+    case 37: case 97: move(0); break;
+    case 38: case 100: move(1); break;
+    case 39: case 115: move(2); break;
+    case 40: case 119: move(3); break;
   }
+  e.preventDefault();
 });
 function map() {
 //get x y and determine if any maps need to be loaded.
@@ -31,8 +31,10 @@ console.log(app.pos);
 function move(req) {
   $.post("/api/move",{"user":app.id,"dir":req})
   .done(function(res) {
+    app.pos = res;
     //trigger: encounter ?
     console.log(res);
+    console.log(app);
     //map();
   });
 }

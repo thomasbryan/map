@@ -45,6 +45,10 @@ module.exports = function(grunt) {
       }
     },
     watch: {
+      'copy': {
+        files: ['./src/map/**/*'],
+        tasks: ['copy']
+      },
       'grunt': {
         files: ['Gruntfile.js'],
         options: { reload: true }
