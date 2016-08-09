@@ -6,7 +6,9 @@
   "dependencies": {
 
     "jquery": "latest",
+    "serve-favicon": "latest",
     "body-parser": "latest",
+    "async": "latest",
     "grunt": "latest",
     "grunt-contrib-concat": "latest",
     "grunt-contrib-copy": "latest",

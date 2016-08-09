@@ -1,14 +1,17 @@
 var express = require('express')
+  , favicon = require('serve-favicon')
   , app = express()
   , bodyParser = require('body-parser')
   , http = require('http')
   , server = http.createServer(app)
   , fs = require('fs')
+  , async = require('async')
   , users = __dirname+'/users/'
   , maps = __dirname+'/pub/map/'
   , index = JSON.parse(fs.readFileSync(maps+'index.json','utf8'))
   ;
 server.listen(9000);
+app.use(favicon(maps+'favicon.ico'));
 app.use(express.static('pub'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,128 +23,127 @@ app.post('/api/users', function(req, res) {
   });
 });
 app.post('/api/move', function(req, res) {
-  //async?
-  fs.readFile(users+req.body.user+'.json','utf8', function ( e, d) {
-    //user not found
-    if(e) res.send('{}');
-    var user = JSON.parse(d)
-      , copy = JSON.parse(JSON.stringify(user));
-      ;
-    switch(req.body.dir) {
-      case "0": user = left(user,copy); break;
-      case "1": user = up(user,copy); break;
-      case "2": user = right(user,copy); break;
-      case "3": user = down(user,copy); break;
-    }
-    fs.writeFile(users+req.body.user+'.json', JSON.stringify(user,null,4), function(err) {
-      res.send(JSON.stringify(user.pos));
-    });
+  async.series([
+    function(next) { auth(req,next); },
+    function(next) { 
+      switch(req.body.dir) {
+        case "0":left(req,next); break;
+        case "1":up(req,next); break;
+        case "2":right(req,next); break;
+        case "3":down(req,next); break;
+      }
+    },
+    function(next) { valid(req,next); },
+    function(next) { save(req,next); }
+  ],
+  function(err,req) {
+    if(err) {res.status(err); }
+    res.jsonp(req[req.length-1]);
   });
 });
+function auth(req,cb) {
+  fs.readFile(users+req.body.user+'.json','utf8', function(err,res) {
+    if(err) cb(404,null);
+    req.body.auth = JSON.parse(res);
+    req.body.pos = JSON.parse(JSON.stringify(req.body.auth.pos));
+    cb(null,JSON.parse(res));
+  });
+}
 /** DIRECTION **/
-function left(req,res) {
-  if(req.pos.e - 1 < 0) {
-    if(req.pos.c - 1 < 0) {
-      if(req.pos.a - 1 < 0) {
-        req.pos.a = index.a;
+function left(req,cb) {
+  var pos = req.body.auth.pos;
+  if(pos.e - 1 < 0) {
+    if(pos.c - 1 < 0) {
+      if(pos.a - 1 < 0) {
+        pos.a = index.a;
       }else{
-        req.pos.a = req.pos.a - 1;
+        pos.a = pos.a - 1;
       }
-      req.pos.c = 24;
+      pos.c = 24;
     }else{
-      req.pos.c = req.pos.c - 1;
+      pos.c = pos.c - 1;
     }
-    req.pos.e = 24;
+    pos.e = 24;
   }else{
-    req.pos.e = req.pos.e - 1;
+    pos.e = pos.e - 1;
   }
-  if(!valid(req)) {
-    req = res;
-  }
-  return req;
+  cb(null,req.body);
 }
-function up(req,res) {
-  if(req.pos.f - 1 < 0) {
-    if(req.pos.d - 1 < 0) {
-      if(req.pos.b - 1 < 0) {
-        req.pos.b = index.b;
+function up(req,cb) {
+  var pos = req.body.auth.pos;
+  if(pos.f - 1 < 0) {
+    if(pos.d - 1 < 0) {
+      if(pos.b - 1 < 0) {
+        pos.b = index.b;
       }else{
-        req.pos.b = req.pos.b - 1;
+        pos.b = pos.b - 1;
       }
-      req.pos.d = 24;
+      pos.d = 24;
     }else{
-      req.pos.d = req.pos.d - 1;
+      pos.d = pos.d - 1;
     }
-    req.pos.f = 24;
+    pos.f = 24;
   }else{
-    req.pos.f = req.pos.f - 1;
+    pos.f = pos.f - 1;
   }
-  if(!valid(req)) {
-    req = res;
-  }
-  return req;
+  cb(null,req.body);
 }
-function right(req,res) {
-  if(req.pos.e + 1 > 24) {
-    if(req.pos.c + 1 > 24) {
-      if(req.pos.a + 1 > index.a) {
-        req.pos.a = 0;
+function right(req,cb) {
+  var pos = req.body.auth.pos;
+  if(pos.e + 1 > 24) {
+    if(pos.c + 1 > 24) {
+      if(pos.a + 1 > index.a) {
+        pos.a = 0;
       }else{
-        req.pos.a = req.pos.a + 1;
+        pos.a = pos.a + 1;
       }
-      req.pos.c = 0;
+      pos.c = 0;
     }else{
-      req.pos.c = req.pos.c + 1;
+      pos.c = pos.c + 1;
     }
-    req.pos.e = 0;
+    pos.e = 0;
   }else{
-    req.pos.e = req.pos.e + 1;
+    pos.e = pos.e + 1;
   }
-  if(!valid(req)) {
-    req = res;
-  }
-  return req;
+  cb(null,req.body);
 }
-function down(req,res) {
-  if(req.pos.f + 1 > 24) {
-    if(req.pos.d + 1 > 24) {
-      if(req.pos.b + 1 > index.b) {
-        req.pos.b = 0;
+function down(req,cb) {
+  var pos = req.body.auth.pos;
+  if(pos.f + 1 > 24) {
+    if(pos.d + 1 > 24) {
+      if(pos.b + 1 > index.b) {
+        pos.b = 0;
       }else{
-        req.pos.b = req.pos.b + 1;
+        pos.b = pos.b + 1;
       }
-      req.pos.d = 0;
+      pos.d = 0;
     }else{
-      req.pos.d = req.pos.d + 1;
+      pos.d = pos.d + 1;
     }
-    req.pos.f = 0;
+    pos.f = 0;
   }else{
-    req.pos.f = req.pos.f + 1;
+    pos.f = pos.f + 1;
   }
-  if(!valid(req)) {
-    req = res;
-  }
-  return req;
+  cb(null,req.body);
 }
-function valid(req) {
-  var res = false
-    , a = p(req.pos.a)
-    , b = p(req.pos.b)
-    , c = p(req.pos.c)
-    , d = p(req.pos.d)
-    , e = req.pos.e
-    , f = req.pos.f
+function valid(req,cb) {
+  var a = p(req.body.auth.pos.a)
+    , b = p(req.body.auth.pos.b)
+    , c = p(req.body.auth.pos.c)
+    , d = p(req.body.auth.pos.d)
+    , e = req.body.auth.pos.e
+    , f = req.body.auth.pos.f
     ;
-  fs.readFile(maps+a+b+'/'+c+d,'utf8', function ( err, data) {
-    var rows = data.toString().split('\n')
+  fs.readFile(maps+a+b+'/'+c+d,'utf8', function ( err, res) {
+    var rows = res.toString().split("\n")
       , cols = rows[f].toString().split(',')
       ;
-    if(req.lvl >= cols[e]) {
-      res = true;
+    if(req.body.auth.lvl >= cols[e]) {
+      req.body.valid = true;
+    }else{
+      req.body.valid = false;
     }
-    console.log(res)
-    console.log(rows[f]+e);
-    return res;
+    cb(null,req.body);
   });
 }
 function p(r) {
@@ -150,4 +152,12 @@ function p(r) {
     s = "0"+s;
   }
   return s;
+}
+function save(req,cb) {
+  if(!req.body.valid) {
+    req.body.auth.pos = req.body.pos;
+  }
+  fs.writeFile(users+req.body.user+'.json', JSON.stringify(req.body.auth,null,4), function(err) {
+    cb(null,req.body.auth.pos);
+  });
 }
