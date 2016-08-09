@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  font-family: arial;
 }
 #map { width: 320px; height:320px; }
 #user {
@@ -10,6 +11,48 @@ body {
   width:64px;
   height:64px;
   background-color: black;
+  color: white;
+}
+#nav {
+  position:absolute;
+  width: 320px;
+  height: 160px;
+  text-align:center;
+}
+#nav div:hover {
+  color:#ccc;;
+}
+#nav .left {
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:75%;
+  line-height:160px;
+}
+#nav .up {
+  position:absolute;
+  top:0;
+  bottom:50%;
+  right:25%;
+  left:25%;
+  line-height:80px;
+}
+#nav .right {
+  position:absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  left:75%;
+  line-height:160px;
+}
+#nav .down {
+  position:absolute;
+  top:50%;
+  bottom:0;
+  right:25%;
+  left:25%;
+  line-height:80px;
 }
 .row {
   width: 320px;

@@ -11,6 +11,9 @@ $(document).ready(function() {
     map();
   });
 });
+$(document).on('click touch', '#nav div',function() {
+  move($(this).data('move'));
+});
 $(document).keyup(function(e) {
   switch(e.which) {
     case 37: case 97: move(0); break;
