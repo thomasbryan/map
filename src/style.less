@@ -1,8 +1,59 @@
 body {
   margin: 0;
   font-family: arial;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
-#map { width: 320px; height:320px; }
+#app {
+  margin: auto;
+  height: 480px;
+  width: 320px;
+  z-index: 1;
+}
+#map { 
+  position: absolute;
+  height: 320px; 
+  width: 320px; 
+  z-index: 2;
+}
+.row {
+  width: 320px;
+  height: 64px;
+}
+.col {
+  width: 64px;
+  height: 64px;
+  float: left;
+}
+.tile-0 {
+  background-color: #cecece;
+}
+.tile-3 {
+  background-color: #0063ce;
+}
+#nav {
+  position: absolute;
+  height: 480px;
+  width: 320px;
+  z-index: 3;
+}
+#name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #666;
+  color: #fff;
+  padding:0.25em;
+}
+#lvl {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #666;
+  color: #fff;
+  padding:0.25em;
+}
 #user {
   z-index: 1;
   position:absolute;
@@ -13,59 +64,45 @@ body {
   background-color: black;
   color: white;
 }
-#nav {
-  position:absolute;
-  width: 320px;
-  height: 160px;
+.nav {
+  cursor: pointer;
   text-align:center;
-}
-#nav div:hover {
-  color:#ccc;;
+  border:1px solid black;
 }
 #nav .left {
   position:absolute;
-  top:0;
   bottom:0;
   left:0;
-  right:75%;
-  line-height:160px;
+  height:158px;
+  line-height:158px;
+  width: 78px;
 }
 #nav .up {
   position:absolute;
-  top:0;
-  bottom:50%;
-  right:25%;
-  left:25%;
-  line-height:80px;
+  bottom:80px;
+  right:80px;
+  left:80px;
+  height:78px;
+  line-height:78px;
+  width: 158px;
 }
 #nav .right {
   position:absolute;
-  top:0;
   bottom:0;
   right:0;
-  left:75%;
-  line-height:160px;
+  height:158px;
+  line-height:158px;
+  width: 78px;
 }
 #nav .down {
   position:absolute;
-  top:50%;
   bottom:0;
-  right:25%;
-  left:25%;
-  line-height:80px;
+  right:80px;
+  left:80px;
+  height:78px;
+  line-height:78px;
+  width: 158px;
 }
-.row {
-  width: 320px;
-  height: 64px;
-}
-.col {
-  width: 64px;
-  height: 64px;
-  float:left;
-}
-.tile-0 {
-  background-color:#cecece;
-}
-.tile-3 {
-  background-color: #0063ce;
+#nav .nav:hover {
+  color:#666;
 }
