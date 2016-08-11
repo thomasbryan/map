@@ -11,7 +11,7 @@ $(document).ready(function() {
     if(app.lvl + 1 < 10 ) pad = "0";
     $('#lvl').html(pad+(app.lvl + 1));
     app.id = auth.user;
-    app.map = []
+    app.grid = new Array();
     map();
   });
 });
@@ -28,112 +28,134 @@ $(document).keyup(function(e) {
   e.preventDefault();
 });
 function map() {
+  $('#name').html(app.name+'<br />'+app.pos.e+'/'+app.pos.f);
   var a = p(app.pos.a)
     , b = p(app.pos.b)
     , c = p(app.pos.c)
     , d = p(app.pos.d)
+    , grid = 0
     ;
-// preload next map grid
-  if(app.map[a+b+c+d] === undefined){
-    $.get('/map/'+a+b+'/'+c+d,function(res) {
-      app.map[a+b+c+d] = res;
-      map();
+  gridneighbor(4);
+  if(app.pos.e < 5) {
+    grid++;
+    gridneighbor(0);
+    console.log('e < 5');
+  }
+  if(app.pos.f < 5) {
+    grid++;
+    gridneighbor(1);
+    console.log('f < 5');
+  }
+  if(app.pos.e > 20) {
+    grid++;
+    gridneighbor(2);
+    console.log('e > 20');
+  }
+  if(app.pos.f > 20) {
+    grid++;
+    gridneighbor(3);
+    console.log('f > 20');
+  }
+  if(app.grid.length > 3) {
+    gridcleanup();
+  }
+  switch(grid) {
+    case 0: load(a+b,c+d); break;
+    case 1:
+    //offset??
+    //calculate placement
+    $.each(app.grid,function(k) {
+      load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
+    });
+    break;
+    case 2:
+    console.log('load 4 grid');
+    $.each(app.grid,function(k) {
+      load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
+    });
+    break;
+  }
+}
+function gridneighbor(req) {
+  var a = app.pos.a
+    , b = app.pos.b
+    , c = app.pos.c
+    , d = app.pos.d
+    ;
+  //TODO add logic for determining -1 or +24
+  switch(req) {
+    case 0:
+  if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d))) <0) {
+  app.grid.push((p(a)+p(b)+p(c-1)+p(d)))
+  }
+    break;//left
+    case 1:
+  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d-1))) <0) {
+  app.grid.push((p(a)+p(b)+p(c)+p(d-1)))
+  }
+    break;//up
+    case 2:
+  if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d))) <0) {
+  app.grid.push((p(a)+p(b)+p(c+1)+p(d)))
+  }
+    break;//right
+    case 3:
+  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d+1))) <0) {
+  app.grid.push((p(a)+p(b)+p(c)+p(d+1)))
+  }
+    break;//down
+    case 4:
+  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d))) <0) {
+  app.grid.push((p(a)+p(b)+p(c)+p(d)))
+  }
+    break;
+  }
+}
+function gridcleanup() {
+    console.log('clean up');
+    console.log(app.grid);
+}
+function load(a,b) {
+  if(!$('#map-'+a+b).length) {
+    $.get('/map/'+a+'/'+b,function(res) {
+      var rows = res.toString().split("\n")
+        , html = "";
+      rows.pop();
+      $('#map').append('<div id="map-'+a+b+'">');
+      $.each(rows,function(k,v) {
+        html+='<div class="row">';
+        var cols = v.toString().split(',');
+        $.each(cols,function(kk,vv) {
+          html+="<div class='col tile-"+vv+"'></div>";
+        });
+        html+='</div>';
+      });
+      $('#map-'+a+b).html(html);
+    placement();
     });
   }else{
-//get x y and determine if any maps need to be loaded.
-    var rows = app.map[a+b+c+d].toString().split("\n")
-      , html = ""
-      ;
-    rows.pop();//remove extra line
-//TODO handle edge cases
-//TODO DRY!!! fix logic!
-    for(var i = app.pos.f - 2;i <= app.pos.f + 2;i++) {
-      if(i < 0 || i > 24) {
-        html+="<div class='row'>";
-        if(i < 0) {
-          c = p(app.pos.c-1);
-          if( app.map[a+b+c+d] === undefined) {
-            $.get('/map/'+a+b+'/'+c+d,function(res) {
-              app.map[a+b+c+d] = res;
-              map();
-            });
-          }else{
-            var up = app.map[a+b+c+d].toString().split("\n");
-            up.pop();
-            var cols = rows[i+24].toString().split(',');
-            for(var j = app.pos.e - 2;j <= app.pos.e + 2;j++) {
-              if(j < 0 || j > 24) {
-                html+="<div class='col tile-x'>edge</div>";
-              }else{
-                html+="<div class='col tile-"+cols[j]+"'></div>";
-              }
-            }
-          }
-        }else{
-          c = p(app.pos.c+1);
-          if( app.map[a+b+c+d] === undefined) {
-            $.get('/map/'+a+b+'/'+c+d,function(res) {
-              app.map[a+b+c+d] = res;
-              map();
-            });
-          }else{
-            var down = app.map[a+b+c+d].toString().split("\n");
-            down.pop();
-            var cols = rows[i-24].toString().split(',');
-            for(var j = app.pos.e - 2;j <= app.pos.e + 2;j++) {
-              if(j < 0 || j > 24) {
-                html+="<div class='col tile-x'>edge</div>";
-              }else{
-                html+="<div class='col tile-"+cols[j]+"'></div>";
-              }
-            }
-          }
-        }
-        html+="</div>";
-      }else{
-        var cols = rows[i].toString().split(',');
-        html+="<div class='row'>";
-        for(var j = app.pos.e - 2;j <= app.pos.e + 2;j++) {
-          if(j < 0 || j > 24) {
-            if(j<0) {
-
-          d = p(app.pos.d-1);
-          if( app.map[a+b+c+d] === undefined) {
-            $.get('/map/'+a+b+'/'+c+d,function(res) {
-              app.map[a+b+c+d] = res;
-              map();
-            });
-          }else{
-            var left = app.map[a+b+c+d].toString().split("\n");
-            left.pop();
-            var leftcols = rows[i].toString().split(',');
-            html+="<div class='col tile-"+leftcols[j+24]+"'></div>";
-          }
-            }else{
-          d = p(app.pos.d+1);
-          if( app.map[a+b+c+d] === undefined) {
-            $.get('/map/'+a+b+'/'+c+d,function(res) {
-              app.map[a+b+c+d] = res;
-              map();
-            });
-          }else{
-            var right = app.map[a+b+c+d].toString().split("\n");
-            right.pop();
-            var rightcols = rows[i].toString().split(',');
-            html+="<div class='col tile-"+rightcols[j-24]+"'></div>";
-          }
-
-            }
-          }else{
-            html+="<div class='col tile-"+cols[j]+"'></div>";
-          }
-        }
-        html+="</div>";
-      }
-    }
-    $('#map').html(html);
-    $('#name').html(app.name+'<br />'+app.pos.e+'/'+app.pos.f);
+    placement();
   }
+}
+function placement() {
+  //TODO MATH!
+  var l = ( app.pos.e * 64 ) - 128
+    , t = ( app.pos.f * 64 ) - 128
+    , ls = "-"
+    , ts = "-"
+    ;
+    if(l <= 0) {
+      ls = "";
+      l = Math.abs(l);
+    }
+    if(t <= 0) {
+      ts = "";
+      t = Math.abs(t);
+    }
+  $('#map-'+p(app.pos.a)+p(app.pos.b)+p(app.pos.c)+p(app.pos.d)).css({
+      "margin-top":ts+t+"px",
+      "margin-left":ls+l+"px",
+  });
 }
 function move(req) {
   //TODO player face direction
