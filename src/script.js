@@ -121,7 +121,9 @@ function load(a,b) {
       var rows = res.toString().split("\n")
         , html = "";
       rows.pop();
-      $('#map').append('<div id="map-'+a+b+'">');
+//check current loaded divs to determine where to load.
+      $('#map').append('<div id="map-'+a+b+'" class="map">');
+
       $.each(rows,function(k,v) {
         html+='<div class="row">';
         var cols = v.toString().split(',');
@@ -152,7 +154,7 @@ function placement() {
       ts = "";
       t = Math.abs(t);
     }
-  $('#map-'+p(app.pos.a)+p(app.pos.b)+p(app.pos.c)+p(app.pos.d)).css({
+  $('#map').css({
       "margin-top":ts+t+"px",
       "margin-left":ls+l+"px",
   });
