@@ -12,6 +12,8 @@ $(document).ready(function() {
     $('#lvl').html(pad+(app.lvl + 1));
     app.id = auth.user;
     app.grid = new Array();
+    app.top = false;
+    app.left = false;
     map();
   });
 });
@@ -28,6 +30,9 @@ $(document).keyup(function(e) {
   e.preventDefault();
 });
 function map() {
+  app.grid = new Array();
+  app.top = false;
+  app.left = false;
   $('#name').html(app.name+'<br />'+app.pos.e+'/'+app.pos.f);
   var a = p(app.pos.a)
     , b = p(app.pos.b)
@@ -40,36 +45,44 @@ function map() {
     grid++;
     gridneighbor(0);
     console.log('e < 5');
+    $('#map').css({"width":"3200px","height":"1600px"});
+    app.left = true;
+    console.log('horizontal leftoffset="1600px"');
   }
   if(app.pos.f < 5) {
     grid++;
     gridneighbor(1);
     console.log('f < 5');
+    $('#map').css({"height":"3200px","width":"1600px"});
+    app.top = true;
+    console.log('vertical topoffset="1600px"');
   }
   if(app.pos.e > 20) {
     grid++;
     gridneighbor(2);
+    $('#map').css({"width":"3200px","height":"1600px"});
     console.log('e > 20');
+    console.log('horizontal');
   }
   if(app.pos.f > 20) {
     grid++;
     gridneighbor(3);
+    $('#map').css({"height":"3200px","width":"1600px"});
     console.log('f > 20');
+    console.log('vertical');
   }
   if(app.grid.length > 3) {
     gridcleanup();
   }
   switch(grid) {
-    case 0: load(a+b,c+d); break;
-    case 1:
-    //offset??
-    //calculate placement
-    $.each(app.grid,function(k) {
-      load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
-    });
+    case 0: 
+    load(a+b,c+d); $('.map').not('#map-'+a+b+c+d).remove();
     break;
     case 2:
-    console.log('load 4 grid');
+    $('#map').css({"height":"3200px","width":"3200px"});
+    console.log(app.grid);
+    //get 4th grid.
+    case 1:
     $.each(app.grid,function(k) {
       load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
     });
@@ -121,6 +134,9 @@ function load(a,b) {
       var rows = res.toString().split("\n")
         , html = "";
       rows.pop();
+      console.log('loading' + app.pos.a + app.pos.b + app.pos.c + app.pos.d );
+      console.log(a);
+      console.log(b);
 //check current loaded divs to determine where to load.
       $('#map').append('<div id="map-'+a+b+'" class="map">');
 
@@ -154,6 +170,8 @@ function placement() {
       ts = "";
       t = Math.abs(t);
     }
+    console.log(app.top);
+    console.log(app.left);
   $('#map').css({
       "margin-top":ts+t+"px",
       "margin-left":ls+l+"px",
