@@ -1,5 +1,4 @@
 var app = {};
-//TODO: loaded map regions
 $(document).ready(function() {
   //TODO: auth
   var auth = {"user":0};
@@ -33,59 +32,56 @@ function map() {
   app.grid = new Array();
   app.top = false;
   app.left = false;
-  $('#name').html(app.name+'<br />'+app.pos.e+'/'+app.pos.f);
   var a = p(app.pos.a)
     , b = p(app.pos.b)
     , c = p(app.pos.c)
     , d = p(app.pos.d)
     , grid = 0
     ;
-  gridneighbor(4);
+  gridneighbor(0);
   if(app.pos.e < 5) {
     grid++;
-    gridneighbor(0);
-    console.log('e < 5');
+    gridneighbor(1);
     $('#map').css({"width":"3200px","height":"1600px"});
     app.left = true;
-    console.log('horizontal leftoffset="1600px"');
   }
   if(app.pos.f < 5) {
     grid++;
-    gridneighbor(1);
-    console.log('f < 5');
+    gridneighbor(2);
     $('#map').css({"height":"3200px","width":"1600px"});
     app.top = true;
-    console.log('vertical topoffset="1600px"');
   }
   if(app.pos.e > 20) {
     grid++;
-    gridneighbor(2);
+    gridneighbor(3);
     $('#map').css({"width":"3200px","height":"1600px"});
-    console.log('e > 20');
-    console.log('horizontal');
   }
   if(app.pos.f > 20) {
     grid++;
-    gridneighbor(3);
+    gridneighbor(4);
     $('#map').css({"height":"3200px","width":"1600px"});
-    console.log('f > 20');
-    console.log('vertical');
-  }
-  if(app.grid.length > 3) {
-    gridcleanup();
   }
   switch(grid) {
     case 0: 
-    load(a+b,c+d); $('.map').not('#map-'+a+b+c+d).remove();
+      load(a+b,c+d); $('.map').not('#map-'+a+b+c+d).remove();
     break;
     case 2:
-    $('#map').css({"height":"3200px","width":"3200px"});
-    console.log(app.grid);
-    //get 4th grid.
+      $('#map').css({"height":"3200px","width":"3200px"});
+      var neighbor = 5;
+      if(app.top) { neighbor = neighbor + 1; }
+      if(app.left) { neighbor = neighbor + 2; }
+      gridneighbor(neighbor);
     case 1:
-    $.each(app.grid,function(k) {
-      load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
-    });
+      if(app.grid.length == 2) {
+        $.each($('.map'),function(k,v) {
+          if($.inArray( $(this).attr('data-a')+ $(this).attr('data-b')+ $(this).attr('data-c')+ $(this).attr('data-d'),app.grid) == -1) {
+            $(this).remove();
+          }
+        });
+      }
+      $.each(app.grid,function(k) {
+        load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
+      });
     break;
   }
 }
@@ -95,51 +91,79 @@ function gridneighbor(req) {
     , c = app.pos.c
     , d = app.pos.d
     ;
-  //TODO add logic for determining -1 or +24
+//TODO add logic for determining -1 or +24
   switch(req) {
     case 0:
+  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d))) <0) {
+  app.grid.push((p(a)+p(b)+p(c)+p(d)))
+  }
+    break;//self
+    case 1:
   if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d))) <0) {
   app.grid.push((p(a)+p(b)+p(c-1)+p(d)))
   }
     break;//left
-    case 1:
+    case 2:
   if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d-1))) <0) {
   app.grid.push((p(a)+p(b)+p(c)+p(d-1)))
   }
     break;//up
-    case 2:
+    case 3:
   if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d))) <0) {
   app.grid.push((p(a)+p(b)+p(c+1)+p(d)))
   }
     break;//right
-    case 3:
+    case 4:
   if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d+1))) <0) {
   app.grid.push((p(a)+p(b)+p(c)+p(d+1)))
   }
     break;//down
-    case 4:
-  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d))) <0) {
-  app.grid.push((p(a)+p(b)+p(c)+p(d)))
+    case 5:
+  if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d+1))) <0) {
+  app.grid.push((p(a)+p(b)+p(c+1)+p(d+1)))
   }
-    break;
+    break;//right+down
+    case 6:
+  if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d-1))) <0) {
+  app.grid.push((p(a)+p(b)+p(c+1)+p(d-1)))
+  }
+    break;//right+up
+    case 7:
+  if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d+1))) <0) {
+  app.grid.push((p(a)+p(b)+p(c-1)+p(d+1)))
+  }
+    break;//left+down
+    case 8:
+  if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d-1))) <0) {
+  app.grid.push((p(a)+p(b)+p(c-1)+p(d-1)))
+  }
+    break;//left+up
   }
 }
-function gridcleanup() {
-    console.log('clean up');
-    console.log(app.grid);
-}
-function load(a,b) {
-  if(!$('#map-'+a+b).length) {
-    $.get('/map/'+a+'/'+b,function(res) {
+function load(i,j) {
+  if(!$('#map-'+i+j).length) {
+    $.get('/map/'+i+'/'+j,function(res) {
       var rows = res.toString().split("\n")
+        , a = i.substring(0,2)
+        , b = i.substring(2)
+        , c = j.substring(0,2)
+        , d = j.substring(2)
+        , dom = '<div id="map-'+i+j+'" data-a="'+a+'" data-b="'+b+'" data-c="'+c+'" data-d="'+d+'" class="map">'
+        , bigc = $('#map div[data-c="'+(parseInt(c)+1)+'"]')
+        , bigd = $('#map div[data-c="'+c+'"][data-d="'+(parseInt(d)+1)+'"]')
+        , x = new Array()
+        , y = new Array()
         , html = "";
       rows.pop();
-      console.log('loading' + app.pos.a + app.pos.b + app.pos.c + app.pos.d );
-      console.log(a);
-      console.log(b);
-//check current loaded divs to determine where to load.
-      $('#map').append('<div id="map-'+a+b+'" class="map">');
-
+      if(bigc.length == 0 && bigd.length == 0 ){
+        $('#map').append(dom);
+      }else{
+        if(bigc.length > 0 ) {
+          $(bigc[0]).before(dom);
+        }else{
+          $(bigd[0]).before(dom);
+        }
+      }
       $.each(rows,function(k,v) {
         html+='<div class="row">';
         var cols = v.toString().split(',');
@@ -148,15 +172,14 @@ function load(a,b) {
         });
         html+='</div>';
       });
-      $('#map-'+a+b).html(html);
-    placement();
+      $('#map-'+i+j).html(html);
+      placement();
     });
   }else{
     placement();
   }
 }
 function placement() {
-  //TODO MATH!
   var l = ( app.pos.e * 64 ) - 128
     , t = ( app.pos.f * 64 ) - 128
     , ls = "-"
@@ -170,15 +193,15 @@ function placement() {
       ts = "";
       t = Math.abs(t);
     }
-    console.log(app.top);
-    console.log(app.left);
+    if(app.left) l = l - 1600;
+    if(app.top) t = t - 1600;
   $('#map').css({
-      "margin-top":ts+t+"px",
       "margin-left":ls+l+"px",
+      "margin-top":ts+t+"px",
   });
 }
 function move(req) {
-  //TODO player face direction
+//TODO player face direction
   $.post("/api/move",{"user":app.id,"dir":req})
   .done(function(res) {
     //TODO better logic
@@ -203,8 +226,6 @@ function move(req) {
 }
 function p(r) {
   var s = String(r);
-  if(r<10) {
-    s = "0"+s;
-  }
+  if(r<10) s = "0"+s;
   return s;
 }
