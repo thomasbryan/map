@@ -10,9 +10,6 @@ $(document).ready(function() {
     if(app.lvl + 1 < 10 ) pad = "0";
     $('#lvl').html(pad+(app.lvl + 1));
     app.id = auth.user;
-    app.grid = new Array();
-    app.top = false;
-    app.left = false;
     map();
   });
 });
@@ -32,115 +29,83 @@ function map() {
   app.grid = new Array();
   app.top = false;
   app.left = false;
-  var a = p(app.pos.a)
-    , b = p(app.pos.b)
-    , c = p(app.pos.c)
-    , d = p(app.pos.d)
-    , grid = 0
-    ;
-  gridneighbor(0);
-  if(app.pos.e < 5) {
-    grid++;
-    gridneighbor(1);
-    $('#map').css({"width":"3200px","height":"1600px"});
-    app.left = true;
-  }
-  if(app.pos.f < 5) {
-    grid++;
-    gridneighbor(2);
-    $('#map').css({"height":"3200px","width":"1600px"});
-    app.top = true;
-  }
-  if(app.pos.e > 20) {
-    grid++;
-    gridneighbor(3);
-    $('#map').css({"width":"3200px","height":"1600px"});
-  }
-  if(app.pos.f > 20) {
-    grid++;
-    gridneighbor(4);
-    $('#map').css({"height":"3200px","width":"1600px"});
-  }
-  switch(grid) {
-    case 0: 
-      load(a+b,c+d); $('.map').not('#map-'+a+b+c+d).remove();
-    break;
-    case 2:
-      $('#map').css({"height":"3200px","width":"3200px"});
-      var neighbor = 5;
-      if(app.top) { neighbor = neighbor + 1; }
-      if(app.left) { neighbor = neighbor + 2; }
-      gridneighbor(neighbor);
-    case 1:
-      if(app.grid.length == 2) {
-        $.each($('.map'),function(k,v) {
-          if($.inArray( $(this).attr('data-a')+ $(this).attr('data-b')+ $(this).attr('data-c')+ $(this).attr('data-d'),app.grid) == -1) {
-            $(this).remove();
-          }
-        });
-      }
-      $.each(app.grid,function(k) {
-        load(app.grid[k].substr(0,4),app.grid[k].substr(-4));
-      });
-    break;
-  }
-}
-function gridneighbor(req) {
   var a = app.pos.a
     , b = app.pos.b
     , c = app.pos.c
     , d = app.pos.d
+    , e = app.pos.e
+    , f = app.pos.f
+    , i = ""
+    , j = ""
+    , grid = 0
+    , neighbor = 5
     ;
-//TODO add logic for determining -1 or +24
+//TODO add logic for determining c,d -1 or +24
+  $('#loc').html(':A:'+p(a)+p(b)+'<br />:B:'+p(c)+p(d)+'<br />X'+p(e)+'|Y'+p(f));
+
+  if(f < 5) {
+    app.top = true;
+    grid++;
+    app.grid.push(p(a)+p(b)+p(c)+p(d-1));
+  }
+  if(e < 5) {
+    app.left = true;
+    grid++;
+    app.grid.push(p(a)+p(b)+p(c-1)+p(d));
+  }
+  app.grid.push(p(a)+p(b)+p(c)+p(d));
+  if(e > 20) {
+    grid++;
+    app.grid.push(p(a)+p(b)+p(c+1)+p(d));
+  }
+  if(f > 20) {
+    grid++;
+    app.grid.push(p(a)+p(b)+p(c)+p(d+1));
+  }
+  if(grid==2) {
+    //app.grid.splice(index, 0, grid.);
+    console.log('find the corner');
+      //if(app.top) { neighbor = neighbor + 1; }
+      //if(app.left) { neighbor = neighbor + 2; }
+  }
+  //loop through array > load(div-id);
+  console.log('loop!!!');
+  console.log(app.grid);
+
+  //load(i,j,req);
+}
+function gridneighbor(req) {
   switch(req) {
-    case 0:
-  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d))) <0) {
-  app.grid.push((p(a)+p(b)+p(c)+p(d)))
-  }
-    break;//self
-    case 1:
-  if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d))) <0) {
-  app.grid.push((p(a)+p(b)+p(c-1)+p(d)))
-  }
-    break;//left
-    case 2:
-  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d-1))) <0) {
-  app.grid.push((p(a)+p(b)+p(c)+p(d-1)))
-  }
-    break;//up
-    case 3:
-  if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d))) <0) {
-  app.grid.push((p(a)+p(b)+p(c+1)+p(d)))
-  }
-    break;//right
-    case 4:
-  if( app.grid.indexOf((p(a)+p(b)+p(c)+p(d+1))) <0) {
-  app.grid.push((p(a)+p(b)+p(c)+p(d+1)))
-  }
-    break;//down
     case 5:
-  if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d+1))) <0) {
-  app.grid.push((p(a)+p(b)+p(c+1)+p(d+1)))
-  }
+    i = p(a)+p(b);
+    j = p(c+1)+p(d+1);
+  app.grid.push(i+j)
     break;//right+down
+
     case 6:
-  if( app.grid.indexOf((p(a)+p(b)+p(c+1)+p(d-1))) <0) {
-  app.grid.push((p(a)+p(b)+p(c+1)+p(d-1)))
-  }
+    i = p(a)+p(b);
+    j = p(c+1)+p(d-1);
+  app.grid.push(i+j)
     break;//right+up
+
     case 7:
-  if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d+1))) <0) {
-  app.grid.push((p(a)+p(b)+p(c-1)+p(d+1)))
-  }
+    i = p(a)+p(b);
+    j = p(c-1)+p(d+1);
+  app.grid.push(i+j)
     break;//left+down
+
     case 8:
-  if( app.grid.indexOf((p(a)+p(b)+p(c-1)+p(d-1))) <0) {
-  app.grid.push((p(a)+p(b)+p(c-1)+p(d-1)))
-  }
+    i = p(a)+p(b);
+    j = p(c-1)+p(d-1);
+  app.grid.push(i+j)
     break;//left+up
   }
 }
-function load(i,j) {
+function load(i,j,k) {
+  /*
+if map exists on dom, then we 
+
+  */
   if(!$('#map-'+i+j).length) {
     $.get('/map/'+i+'/'+j,function(res) {
       var rows = res.toString().split("\n")
@@ -149,21 +114,13 @@ function load(i,j) {
         , c = j.substring(0,2)
         , d = j.substring(2)
         , dom = '<div id="map-'+i+j+'" data-a="'+a+'" data-b="'+b+'" data-c="'+c+'" data-d="'+d+'" class="map">'
-        , bigc = $('#map div[data-c="'+(parseInt(c)+1)+'"]')
-        , bigd = $('#map div[data-c="'+c+'"][data-d="'+(parseInt(d)+1)+'"]')
         , x = new Array()
         , y = new Array()
         , html = "";
       rows.pop();
-      if(bigc.length == 0 && bigd.length == 0 ){
-        $('#map').append(dom);
-      }else{
-        if(bigc.length > 0 ) {
-          $(bigc[0]).before(dom);
-        }else{
-          $(bigd[0]).before(dom);
-        }
-      }
+if(k>=0) {
+  $('#grid'+k).html(dom);
+}
       $.each(rows,function(k,v) {
         html+='<div class="row">';
         var cols = v.toString().split(',');
@@ -176,6 +133,13 @@ function load(i,j) {
       placement();
     });
   }else{
+    var curr = $('#map-'+i+j).parent().attr('id');
+    if(curr != "grid"+k) {
+      $('#'+curr).detach().appendTo('#grid'+k);
+      console.log('lets update this position.');
+      //$("#childNode").detach().appendTo("#parentNode");
+    }
+    console.log(i+j+" "+k);
     placement();
   }
 }
@@ -185,16 +149,20 @@ function placement() {
     , ls = "-"
     , ts = "-"
     ;
-    if(l <= 0) {
-      ls = "";
-      l = Math.abs(l);
-    }
-    if(t <= 0) {
-      ts = "";
-      t = Math.abs(t);
-    }
-    if(app.left) l = l - 1600;
-    if(app.top) t = t - 1600;
+  if(l <= 0) {
+    ls = "";
+    l = Math.abs(l);
+  }
+  if(t <= 0) {
+    ts = "";
+    t = Math.abs(t);
+  }
+  if(app.left) {
+    l = (ls.length == 0 ? l - 1600 : l + 1600) ;
+  }
+  if(app.top) {
+    t = (ts.length == 0 ? t - 1600 : t + 1600) ;
+  }
   $('#map').css({
       "margin-left":ls+l+"px",
       "margin-top":ts+t+"px",

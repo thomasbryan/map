@@ -27,6 +27,10 @@ body {
   position: absolute;
   top:0;
   z-index: -1;
+  border-collapse:collapse;
+}
+#map td {
+  padding:0;
 }
 .map {
   width:1600px;
@@ -43,7 +47,13 @@ body {
   float: left;
 }
 .tile-0 {
-  background-color: #cecece;
+  background-color: #573b0c;
+}
+.tile-1 {
+  background-color: #01a611;
+}
+.tile-2 {
+  background-color: #228b22;;
 }
 .tile-3 {
   background-color: #0063ce;
@@ -80,6 +90,16 @@ body {
   height:64px;
   background-color: black;
   color: white;
+}
+#loc {
+  font-family:monospace;
+  position: absolute;
+  bottom: 160px;
+  right: 0;
+  background-color: #666;
+  color: #fff;
+  padding:0.25em;
+  opacity:0.25;
 }
 .nav {
   background-color: #fff;
