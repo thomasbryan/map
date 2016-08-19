@@ -37,76 +37,51 @@ function map() {
     , f = app.pos.f
     , i = ""
     , j = ""
+    , l = c+1
+    , t = d+1
     , grid = 0
-    , neighbor = 5
+    , index = 3
     ;
 //TODO add logic for determining c,d -1 or +24
   $('#loc').html(':A:'+p(a)+p(b)+'<br />:B:'+p(c)+p(d)+'<br />X'+p(e)+'|Y'+p(f));
-
   if(f < 5) {
     app.top = true;
     grid++;
     app.grid.push(p(a)+p(b)+p(c)+p(d-1));
+    $('#map').css({"height":"3200px","width":"1600px"});
   }
   if(e < 5) {
     app.left = true;
     grid++;
     app.grid.push(p(a)+p(b)+p(c-1)+p(d));
+    $('#map').css({"width":"3200px","height":"1600px"});
   }
   app.grid.push(p(a)+p(b)+p(c)+p(d));
   if(e > 20) {
     grid++;
     app.grid.push(p(a)+p(b)+p(c+1)+p(d));
+    $('#map').css({"width":"3200px","height":"1600px"});
   }
   if(f > 20) {
     grid++;
     app.grid.push(p(a)+p(b)+p(c)+p(d+1));
+    $('#map').css({"height":"3200px","width":"1600px"});
   }
-  if(grid==2) {
-    //app.grid.splice(index, 0, grid.);
-    console.log('find the corner');
-      //if(app.top) { neighbor = neighbor + 1; }
-      //if(app.left) { neighbor = neighbor + 2; }
+  if(grid == 2) {
+    if(app.left) { l = c-1; index = index - 1;}
+    if(app.top) { t = d-1; index = index - 2;}
+    app.grid.splice(index, 0, p(a)+p(b)+p(l)+p(t));
+    $('#map').css({"height":"3200px","width":"3200px"});
   }
-  //loop through array > load(div-id);
-  console.log('loop!!!');
-  console.log(app.grid);
-
-  //load(i,j,req);
+  app.step = app.step + 1;
+  $('#map').append('<div id="step-'+app.step+'" class="step">');
+  $('.step').not('#step-'+app.step).remove();
+  $.each(app.grid,function(k,v) {
+    load(v.substring(0,4),v.substring(4));
+  });
 }
-function gridneighbor(req) {
-  switch(req) {
-    case 5:
-    i = p(a)+p(b);
-    j = p(c+1)+p(d+1);
-  app.grid.push(i+j)
-    break;//right+down
-
-    case 6:
-    i = p(a)+p(b);
-    j = p(c+1)+p(d-1);
-  app.grid.push(i+j)
-    break;//right+up
-
-    case 7:
-    i = p(a)+p(b);
-    j = p(c-1)+p(d+1);
-  app.grid.push(i+j)
-    break;//left+down
-
-    case 8:
-    i = p(a)+p(b);
-    j = p(c-1)+p(d-1);
-  app.grid.push(i+j)
-    break;//left+up
-  }
-}
-function load(i,j,k) {
-  /*
-if map exists on dom, then we 
-
-  */
-  if(!$('#map-'+i+j).length) {
+function load(i,j) {
+  if($('#map-'+i+j).length == 0) {
     $.get('/map/'+i+'/'+j,function(res) {
       var rows = res.toString().split("\n")
         , a = i.substring(0,2)
@@ -118,9 +93,7 @@ if map exists on dom, then we
         , y = new Array()
         , html = "";
       rows.pop();
-if(k>=0) {
-  $('#grid'+k).html(dom);
-}
+      $('#step-'+app.step).append(dom);
       $.each(rows,function(k,v) {
         html+='<div class="row">';
         var cols = v.toString().split(',');
@@ -133,13 +106,7 @@ if(k>=0) {
       placement();
     });
   }else{
-    var curr = $('#map-'+i+j).parent().attr('id');
-    if(curr != "grid"+k) {
-      $('#'+curr).detach().appendTo('#grid'+k);
-      console.log('lets update this position.');
-      //$("#childNode").detach().appendTo("#parentNode");
-    }
-    console.log(i+j+" "+k);
+    $('#map-'+i+j).appendTo('#step-'+app.step);
     placement();
   }
 }
