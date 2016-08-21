@@ -11,7 +11,6 @@
     "async": "latest",
     "grunt": "latest",
     "grunt-contrib-concat": "latest",
-    "grunt-contrib-copy": "latest",
     "grunt-contrib-less": "latest",
     "grunt-contrib-uglify": "latest",
     "grunt-minify-html": "latest",

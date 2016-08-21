@@ -15,23 +15,27 @@ body {
   width:100%;
   height:100%;
   border-collapse:collapse;
-}
-#app .bcw {
-  background-color:#fff;
-}
-#app .app {
-  width:320px;
-  height:480px;
+  .bcw {
+    background-color:#fff;
+  }
+  .app {
+    width:320px;
+    height:480px;
+  }
 }
 #map { 
   position: absolute;
   top:0;
   z-index: -1;
   border-collapse:collapse;
+  td {
+    padding:0;
+  }
 }
-#map td {
-  padding:0;
-}
+#map.a { height: 1600px; width: 1600px; }
+#map.b { height: 1600px; width: 3200px; }
+#map.c { height: 3200px; width: 1600px; }
+#map.d { height: 3200px; width: 3200px; }
 .map {
   width:1600px;
   width:1600px;
@@ -47,15 +51,18 @@ body {
   float: left;
 }
 .tile-0 {
-  background-color: #573b0c;
-}
-.tile-1 {
   background-color: #01a611;
 }
+.tile-1 {
+  background-color: #228b22;
+}
 .tile-2 {
-  background-color: #228b22;;
+  background-color: #555c45;
 }
 .tile-3 {
+  background-color: #573b0c;
+}
+.tile-4 {
   background-color: #0063ce;
 }
 #nav {
@@ -64,6 +71,38 @@ body {
   height: 480px;
   width: 320px;
   z-index: 2;
+  .nav.l {
+    position: absolute;
+    top: 96px;
+    left: 0;
+    height: 128px;
+    line-height: 128px;
+    width: 96px;
+  }
+  .nav.u {
+    position:absolute;
+    top:0;
+    left:96px;
+    height:96px;
+    line-height:96px;
+    width: 128px;
+  }
+  .nav.r {
+    position:absolute;
+    top: 96px;
+    right: 0;
+    height: 128px;
+    line-height: 128px;
+    width: 96px;
+  }
+  .nav.d {
+    position:absolute;
+    top:224px;
+    left:96px;
+    height:96px;
+    line-height:96px;
+    width: 128px;
+  }
 }
 #name {
   position: absolute;
@@ -88,8 +127,11 @@ body {
   left: 128px;
   width:64px;
   height:64px;
-  background-color: black;
-  color: white;
+  line-height:64px;
+  font-family: Comic Sans MS;
+  font-size: 32px;
+  text-align: center;
+  color: #fff;
 }
 #loc {
   font-family:monospace;
@@ -101,64 +143,36 @@ body {
   padding:0.25em;
   opacity:0.25;
 }
+#act {
+  bottom: -2px;
+  left: -2px;
+  position: absolute;
+  width: 324px;
+  height: 162px;
+  .act {
+    margin: 16px;
+    font-size: 32px;
+    cursor: pointer;
+    width: 128px;
+    height: 48px;
+    line-height: 48px;
+    text-align: center;
+    float: left;
+    border:1px solid black;
+  }
+}
 .nav {
-  background-color: #fff;
+  color: #fff;
   cursor: pointer;
   text-align:center;
-  border:1px solid black;
+  font-family: Comic Sans MS;
 }
-#nav .left {
-  position:absolute;
-  bottom:0;
-  left:0;
-  height:158px;
-  line-height:158px;
-  width: 78px;
+.l::before { content: "\25c1"; }
+.u::before { content: "\25b3"; }
+.r::before { content: "\25b7"; }
+.d::before { content: "\25bd"; }
+#nav .nav:hover, #act .act:hover {
+  color:#fff;
+  background-color:#666;
+  opacity: 0.5;
 }
-#nav .up {
-  position:absolute;
-  bottom:80px;
-  right:80px;
-  left:80px;
-  height:78px;
-  line-height:78px;
-  width: 158px;
-}
-#nav .right {
-  position:absolute;
-  bottom:0;
-  right:0;
-  height:158px;
-  line-height:158px;
-  width: 78px;
-}
-#nav .down {
-  position:absolute;
-  bottom:0;
-  right:80px;
-  left:80px;
-  height:78px;
-  line-height:78px;
-  width: 158px;
-}
-#nav .nav:hover {
-  color:#666;
-}
-#left {
-position: absolute;
-top:0;
-width: 100px;
-background-color:red;
-}
-#bottom {
-  width:100%;
-  height: 100%;
-  position:absolute;
-  bottom:0;
-  top:480px;
-  left:0;
-  right:0;
-  background-color:#fff;
-  z-index:3;
-}
-

@@ -10,15 +10,6 @@ module.exports = function(grunt) {
         dest: './pub/script.js'
       },
     },
-    copy: {
-      default: {
-        expand: true,
-        cwd: './src/map/',
-        src: ['**/*'],
-        dest: './pub/map/',
-        filter: 'isFile'
-      }
-    },
     less: {
       default: {
         options: { compress: true, yuicompress: true },  
@@ -45,10 +36,6 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      'copy': {
-        files: ['./src/map/**/*'],
-        tasks: ['copy']
-      },
       'grunt': {
         files: ['Gruntfile.js'],
         options: { reload: true }
@@ -78,8 +65,8 @@ module.exports = function(grunt) {
   }); 
   grunt.config('env', grunt.option('env') || process.env.GRUNT_ENV || 'development');
   if(grunt.config('env') === 'production') {
-    grunt.registerTask('default',['concat','copy','minifyHtml','less','uglify']);
+    grunt.registerTask('default',['concat','minifyHtml','less','uglify']);
   }else{
-    grunt.registerTask('default', ['copy','concurrent']);
+    grunt.registerTask('default', ['concurrent']);
   }
 };

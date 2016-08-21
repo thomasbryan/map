@@ -7,12 +7,13 @@ var express = require('express')
   , fs = require('fs')
   , async = require('async')
   , users = __dirname+'/users/'
-  , maps = __dirname+'/pub/map/'
+  , maps = __dirname+'/src/map/'
   , index = JSON.parse(fs.readFileSync(maps+'index.json','utf8'))
   ;
 server.listen(9000);
 app.use(favicon(maps+'favicon.ico'));
 app.use(express.static('pub'));
+app.use(express.static(maps));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 console.log("Server started: http://localhost:9000");
@@ -35,6 +36,23 @@ app.post('/api/move', function(req, res) {
     },
     function(next) { valid(req,next); },
     function(next) { save(req,next); }
+  ],
+  function(err,req) {
+    if(err) {res.status(err); }
+    res.jsonp(req[req.length-1]);
+  });
+});
+app.post('/api/act', function(req, res) {
+  async.series([
+    function(next) { auth(req,next); },
+    function(next) {
+      switch(req.body.act) {
+        case "a":a(req,next); break;
+        case "b":b(req,next); break;
+        case "x":x(req,next); break;
+        case "y":y(req,next); break;
+      }
+    }
   ],
   function(err,req) {
     if(err) {res.status(err); }
@@ -160,4 +178,16 @@ function save(req,cb) {
   fs.writeFile(users+req.body.user+'.json', JSON.stringify(req.body.auth,null,4), function(err) {
     cb(null,req.body.auth.pos);
   });
+}
+function a(req,cb) {
+  cb(null,req.body);
+}
+function b(req,cb) {
+  cb(null,req.body);
+}
+function x(req,cb) {
+  cb(null,req.body);
+}
+function y(req,cb) {
+  cb(null,req.body);
 }
