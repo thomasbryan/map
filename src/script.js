@@ -2,7 +2,7 @@ var app = {};
 $(document).ready(function() {
   //TODO: auth
   var auth = {"user":0};
-  $.post("/api/users",auth)
+  $.post("/api.php?req=users",auth)
   .done(function(res) {
     app = res;
     $('#name').html(app.name);
@@ -133,7 +133,7 @@ function placement() {
   if(app.top) {
     t = (ts.length == 0 ? t - 1600 : t + 1600) ;
   }
-  if($('#map').hasClass('d')) {
+  if($('#map').hasClass('d')||$('#map').hasClass('c')) {
     t = (ts.length == 0 ? t - 18 : t + 18) ;
   }
   $('#map').css({

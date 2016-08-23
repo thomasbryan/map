@@ -65,12 +65,15 @@ body {
 .tile-4 {
   background-color: #0063ce;
 }
+.tile-5 {
+}
 #nav {
   position: absolute;
   top:0;
   height: 480px;
   width: 320px;
   z-index: 2;
+  .nav.l::before { content: "\25c1"; }
   .nav.l {
     position: absolute;
     top: 96px;
@@ -79,6 +82,7 @@ body {
     line-height: 128px;
     width: 96px;
   }
+  .nav.u::before { content: "\25b3"; }
   .nav.u {
     position:absolute;
     top:0;
@@ -87,6 +91,7 @@ body {
     line-height:96px;
     width: 128px;
   }
+  .nav.r::before { content: "\25b7"; }
   .nav.r {
     position:absolute;
     top: 96px;
@@ -95,6 +100,7 @@ body {
     line-height: 128px;
     width: 96px;
   }
+  .nav.d::before { content: "\25bd"; }
   .nav.d {
     position:absolute;
     top:224px;
@@ -132,6 +138,20 @@ body {
   font-size: 32px;
   text-align: center;
   color: #fff;
+  &.u {
+    width: 64px;
+    height: 64px;
+    background: url('sprite.png') 0 0;
+  }
+  &.l {
+    width: 64px;
+    height: 64px;
+    background: url('sprite.png') -64px -64px;
+  }
+  &.u::before { content: "\25b3"; }
+  &.l::before { content: "\25c1"; }
+  &.d::before { content: "\25bd"; }
+  &.r::before { content: "\25b7"; }
 }
 #loc {
   font-family:monospace;
@@ -167,10 +187,6 @@ body {
   text-align:center;
   font-family: Comic Sans MS;
 }
-.l::before { content: "\25c1"; }
-.u::before { content: "\25b3"; }
-.r::before { content: "\25b7"; }
-.d::before { content: "\25bd"; }
 #nav .nav:hover, #act .act:hover {
   color:#fff;
   background-color:#666;

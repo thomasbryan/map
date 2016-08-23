@@ -3,6 +3,7 @@ var express = require('express')
   , app = express()
   , bodyParser = require('body-parser')
   , http = require('http')
+  , port = process.env.PORT || 9000
   , server = http.createServer(app)
   , fs = require('fs')
   , async = require('async')
@@ -10,7 +11,7 @@ var express = require('express')
   , maps = __dirname+'/src/map/'
   , index = JSON.parse(fs.readFileSync(maps+'index.json','utf8'))
   ;
-server.listen(9000);
+server.listen(port);
 app.use(favicon(maps+'favicon.ico'));
 app.use(express.static('pub'));
 app.use(express.static(maps));
@@ -45,6 +46,7 @@ app.post('/api/move', function(req, res) {
 app.post('/api/act', function(req, res) {
   async.series([
     function(next) { auth(req,next); },
+    function(next) { valid(req,next); },
     function(next) {
       switch(req.body.act) {
         case "a":a(req,next); break;
@@ -156,6 +158,8 @@ function valid(req,cb) {
     var rows = res.toString().split("\n")
       , cols = rows[f].toString().split(',')
       ;
+    req.body.curr = cols[e];
+    req.body.grid = res;
     if(req.body.auth.lvl >= cols[e]) {
       req.body.valid = true;
     }else{
@@ -180,14 +184,26 @@ function save(req,cb) {
   });
 }
 function a(req,cb) {
+  req.body.a = "roll dice and determine if item is found.";
   cb(null,req.body);
 }
 function b(req,cb) {
+  req.body.b = "action to be deteremined";
   cb(null,req.body);
 }
 function x(req,cb) {
-  cb(null,req.body);
+  if(req.body.curr == 0) {
+    cb(null,req.body);
+  }else{
+    req.body.x="make this lower";
+    cb(null,req.body);
+  }
 }
 function y(req,cb) {
-  cb(null,req.body);
+  if(req.body.curr < req.body.auth.lvl) {
+    req.body.y="make this higher";
+    cb(null,req.body);
+  }else{
+    cb(null,req.body);
+  }
 }

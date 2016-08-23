@@ -1,7 +1,6 @@
 ### App ###
 pub/
-users/
-deprecated
+users/*
 
 ### Node ###
 node_modules

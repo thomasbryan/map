@@ -10,6 +10,22 @@ module.exports = function(grunt) {
         dest: './pub/script.js'
       },
     },
+    copy: {
+      default: {
+        expand: true,
+        cwd: './src/',
+        src: ['*png'],
+        dest: './pub/',
+        filter: 'isFile'
+      },
+      api: {
+        expand: true,
+        cwd: './src/',
+        src: ['api.php'],
+        dest: './pub/',
+        filter: 'isFile'
+      }
+    },
     less: {
       default: {
         options: { compress: true, yuicompress: true },  
@@ -31,14 +47,29 @@ module.exports = function(grunt) {
     },
     concurrent: {
       default: {
-        tasks: ['nodemon','watch'],
+        tasks: ['exec','watch'],
         options: { logConcurrentOutput: true }
+      }
+    },
+    exec: {
+      default: {
+        cmd: 'php -S localhost:8080 -t ./pub/',
+        stdout: true,
+        stderr: false
       }
     },
     watch: {
       'grunt': {
         files: ['Gruntfile.js'],
         options: { reload: true }
+      },
+      'copy-api': {
+        files: './src/api.php',
+        tasks: ['copy:api']
+      },
+      'copy-image': {
+        files: './src/*png',
+        tasks: ['copy']
       },
       'html': {
         files: './src/index.html',
