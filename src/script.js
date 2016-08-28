@@ -2,7 +2,7 @@ var app = {};
 $(document).ready(function() {
   //TODO: auth
   var auth = {"user":0};
-  $.post("/api.php?req=users",auth)
+  $.post("/api/users/",auth)
   .done(function(res) {
     app = res;
     $('#name').html(app.name);
@@ -149,7 +149,7 @@ function move(req) {
     case 3: dir = "d"; break;
   }
   $('#user').removeClass().addClass(dir);
-  $.post("/api/move",{"user":app.id,"dir":req})
+  $.post("/api/move/", {"user":app.id,"dir":req})
   .done(function(res) {
     //TODO better logic
     if(
@@ -174,7 +174,7 @@ function move(req) {
 function act(req) {
   $.post("/api/act",{"user":app.id,"act":req})
   .done(function(res) {
-    console.log(res);
+    app.act = res;
   });
 }
 function p(r) {

@@ -19,7 +19,6 @@
   },
   "devDependencies": {
     "express": "latest",
-    "grunt-exec": "latest",
     "grunt-concurrent": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-nodemon": "latest"

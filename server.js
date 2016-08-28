@@ -51,8 +51,6 @@ app.post('/api/act', function(req, res) {
       switch(req.body.act) {
         case "a":a(req,next); break;
         case "b":b(req,next); break;
-        case "x":x(req,next); break;
-        case "y":y(req,next); break;
       }
     }
   ],
@@ -146,6 +144,7 @@ function down(req,cb) {
   }
   cb(null,req.body);
 }
+/** /DIRECTION **/
 function valid(req,cb) {
   var a = p(req.body.auth.pos.a)
     , b = p(req.body.auth.pos.b)
@@ -178,32 +177,23 @@ function p(r) {
 function save(req,cb) {
   if(!req.body.valid) {
     req.body.auth.pos = req.body.pos;
+  }else{
+    req.body.auth.step = parseInt(req.body.auth.step) + 1;
   }
   fs.writeFile(users+req.body.user+'.json', JSON.stringify(req.body.auth,null,4), function(err) {
     cb(null,req.body.auth.pos);
   });
 }
+/** ACTION **/
 function a(req,cb) {
   req.body.a = "roll dice and determine if item is found.";
-  cb(null,req.body);
+  cb(null,{"roll":roll(6)});
 }
 function b(req,cb) {
   req.body.b = "action to be deteremined";
   cb(null,req.body);
 }
-function x(req,cb) {
-  if(req.body.curr == 0) {
-    cb(null,req.body);
-  }else{
-    req.body.x="make this lower";
-    cb(null,req.body);
-  }
-}
-function y(req,cb) {
-  if(req.body.curr < req.body.auth.lvl) {
-    req.body.y="make this higher";
-    cb(null,req.body);
-  }else{
-    cb(null,req.body);
-  }
+/** /ACTION **/
+function roll(req) {
+  return 1 + Math.floor(Math.random() * req);
 }
